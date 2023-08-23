@@ -1,0 +1,34 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                controller="MyCommissionController"
+                extends="c:HandleErrorModal"
+                access="global" > 
+    
+    <aura:attribute name='currentLoggedInUser' type="Object" description="While intializing the component, This attribute will popuplate with current logged in user-details."/>
+    <aura:attribute name='isUserIsSalesRep' type="boolean" default='true' description="this is for validating the current looged in user is belongs to sales rep profile or not"/>
+    <aura:attribute name="isAnDRep" type="Boolean" default="false" description="contains true if profile is Sales Representative - AD"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-grid slds-wrap slds-gutters">
+        <!--section 1-->
+        <!--Section shows the commissions information of current logged in user-->
+        <aura:if isTrue="{!v.isUserIsSalesRep}">
+            <div class="slds-col slds-size_3-of-3 slds-medium-size_8-of-12 slds-order_2 slds-medium-order_1 slds-m-bottom_large">
+                <span><c:MC_Commissions currentLoggedInUser="{!v.currentLoggedInUser}" isAnDRep = "{!v.isAnDRep}"/></span>
+            </div>
+            <!--section 1 Ends-->
+            <!--section 2-->
+            <!--This part hows the commission structure for the current logged in  user-->
+            <div class="slds-col slds-size_3-of-3 slds-medium-size_4-of-12 slds-order_1 slds-medium-order_2 slds-m-bottom_large">
+                <span><c:MC_UserDetails currentLoggedInUser="{!v.currentLoggedInUser}" isAnDRep = "{!v.isAnDRep}"/></span>
+            </div>
+            <!--section 2 Ends-->
+            <aura:set attribute="else">
+                <div class="userMessage">
+                    <strong>
+                       You don't belong to any sales representative profiles to access the my commission tab.
+                    </strong>
+                </div>
+            </aura:set>
+        </aura:if> 
+    </div>
+</aura:component>

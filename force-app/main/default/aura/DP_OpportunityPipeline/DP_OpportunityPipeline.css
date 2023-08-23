@@ -1,0 +1,8 @@
+@media (max-width: 600px) {
+    .THIS .display {
+        display: flex;
+        flex-direction: column;
+        /* align-items: center; */
+        justify-content: center;
+    }
+}

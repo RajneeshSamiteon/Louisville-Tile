@@ -1,0 +1,64 @@
+<aura:component controller="CreditApplicationCodeController"
+                extends="c:HandleErrorModal"
+                implements="flexipage:availableForRecordHome,force:hasRecordId"
+                access="global" >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="generatedOtp" type="String"  default="No Code" />
+    <aura:attribute name="remainingTime" type="String" default="00:00" />
+    <aura:attribute name="codeGenerationAddedTime" type="String" />
+    <aura:attribute name="isDisplaySpinner" type="Boolean" default="true" />
+    <aura:attribute name="isDisableRegenrateButton" type="Boolean" default="true" />
+    <aura:handler   name="change" value="{!v.generatedOtp}" action="{!c.handleCodeChange}"/>
+    <aura:attribute name="isCodeChange" type="Boolean" default="false" />
+
+
+    <article class="slds-card">
+        <aura:if isTrue="{!v.isDisplaySpinner}">
+            <div class="slds-p-horizontal--small slds-size--1-of-1">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 isActivityLoading">
+                    <lightning:spinner variant="brand" size="small"/>
+                </div>   
+            </div>
+        </aura:if>
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container">
+                        <lightning:icon iconName="standard:coupon_codes" size="small"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span>Code Generator</span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_3-of-12 slds-text-align_right title">
+                    <strong>OTP</strong>
+                </div>
+                <div class="slds-col slds-size_1-of-12 slds-text-align_center title">
+                    <strong>:</strong>
+                </div>
+                <div class="slds-col slds-size_3-of-12 slds-text-align_left title">
+                    {!v.generatedOtp}
+                </div>
+                <div class="slds-col slds-size_5-of-12 slds-text-align_center">
+                    <lightning:button variant="brand-outline"
+                                      iconName="utility:refresh"
+                                      label="Regenerate Code"
+                                      title="Refresh Code"
+                                      disabled="{!v.isDisableRegenrateButton}"
+                                      onclick="{!c.regenerateCode}" />
+                </div>
+            </div>
+        </div>
+        <footer class="slds-card__footer">
+            <strong>Time to Regenerate OTP : </strong> {!v.remainingTime}
+        </footer>
+    </article>
+    
+</aura:component>

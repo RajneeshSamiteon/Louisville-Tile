@@ -1,0 +1,58 @@
+<aura:component controller="DealerProfileController" 
+                extends="c:HandleErrorModal"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  >
+    <aura:handler name="init" 
+                  value="{!this}" 
+                  action="{!c.doInit}"
+                  description=" For Reload The Page"/>
+    <aura:attribute name="isShowSpinner" 
+                    type="Boolean" default="true" />
+<aura:attribute name="recordId" 
+                    type="String" 
+                    description="Get AccountId OnLoad"/>
+    <aura:attribute name="accountName" 
+                    type="String" 
+                    description="Get Account Name"/>
+     <aura:attribute name="currentAccountCategary" 
+                    type="String"
+                    description="This's store for CurrentAccount Categary"/>
+    
+     <aura:attribute name="accountCategories" 
+                     type="List"/>
+    <aura:attribute name="buildercategory" 
+                     type="List"/>
+     <aura:attribute name="lastThreeCategory" 
+                     type="List"/>
+     <aura:attribute name="isFirstFourCategoryFound" 
+                    type="boolean" 
+                    default="false"
+                    description="check first four category"/>
+    
+    <aura:attribute name="isLastThreeCategoryFound" 
+                    type="boolean" 
+                    default="false"
+                    description="check last three category"/>
+    <aura:attribute name="isbuildercategoryFound" 
+                    type="boolean" 
+                    default="false"
+                    description="check builder category"/>
+      <aura:if isTrue="{!v.isFirstFourCategoryFound}">
+    <c:DealerAndOtherThreeCategory recordId="{!v.recordId}" currentAccountCategary="{!v.currentAccountCategary}"/>
+    </aura:if>
+    <aura:if isTrue="{!v.isbuildercategoryFound}">
+            <c:DP_BuilderProfile currentCategory="{!v.currentAccountCategary}" accountName="{!v.accountName}" recordId="{!v.recordId}"/>
+        </aura:if>
+    <aura:if isTrue="{!v.Spinner}">
+        <lightning:spinner class="Dp-spinner slds-spinner_brand" alternativeText="Please wait........." variant="brand" size="large"/>
+    </aura:if>
+    <aura:if isTrue="{!v.isLastThreeCategoryFound}">
+    <c:DP_OpportunityPipeline recordId="{!v.recordId}" currentCategory="{!v.currentAccountCategary}" accountName="{!v.accountName}" />
+    </aura:if>
+    <aura:if isTrue="{!v.isShowSpinner}">
+        <div class="slds-spinner_container"> 
+            <div role="status" class="slds-spinner_large slds-spinner_brand"> 
+                <lightning:spinner alternativeText="Loading" size="large" /> 
+            </div> 
+        </div>
+    </aura:if>
+</aura:component>

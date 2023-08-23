@@ -1,0 +1,296 @@
+<aura:component controller="MC_UserDetailsController"
+                extends="c:HandleErrorModal"
+                access="global">
+    <!-- All attributes for this component-->
+    <aura:attribute name="currentLoggedInUser" type="object" description="While intializing the component, This attribute will popuplate with current logged in user."/>
+    <aura:attribute name="commissionStructure" type="object" description="This Attribute holds commission structure data."/>
+    <aura:attribute name="showSpinner" type="Boolean" description="To show and hide the spinner."/>
+    <aura:attribute name="activeSections" type="List" description="Attribute contains the default open accordian sections names."/>
+    <aura:attribute name="detailsViewer" type="String" description="On phone if the commission details should show or not that will be handled by this attribute"/>
+    <aura:attribute name="isAnDRep" type="Boolean" description="contains true if profile is Sales Representative - AD"/>
+    <aura:attribute name="dealerTiers" type="List" description="if rep is not AD, this will contain dealer tiers."/>
+    <aura:attribute name="commercialTiers" type="List" description="if rep is not AD, this will contain commercial tiers."/>
+    
+    <!--Handlers for this component-->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.currentLoggedInUser}" action="{!c.handleUserChanges}"/>
+    
+    <!--Body of the component-->
+    <lightning:card>
+        <div class="slds-m-horizontal_x-small show_menu" >
+            <span aura:id="rotate" class='right_align'>
+                <lightning:icon iconName="utility:threedots_vertical" alternativeText="Connected" onclick="{! c.handleClick }" style="{!v.detailsViewer == 'Closed'?'':'transform:rotate(90deg);'}" class="pointer"/>
+                <!--<lightning:buttonIcon iconName="{!v.detailsViewer == 'Closed'?'utility:threedots_vertical':'utility:threedots'}" name="{!v.detailsViewer}" variant="bare" onclick="{! c.handleClick }" size="large"  alternativeText="Settings"/>-->
+            </span>
+        </div>
+        <!-- Section 1 -->
+        <!-- This part will be used to hide/unhide the spinner -->
+        <aura:if isTrue ="{!v.showSpinner}">
+            <lightning:spinner alternativeText="Loading" size="medium" variant="brand" />
+        </aura:if>
+        <!-- Section 2 -->
+        <!-- This Part shows the Details of Current Logged in user -->
+        <div class="display-props" aura:id="viewer">
+            <aura:if isTrue ="{!v.currentLoggedInUser.Name}">
+                <div class="slds-align_absolute-center slds-text-heading_large Banner_Background">
+                    <img src= "{!v.currentLoggedInUser.MediumPhotoUrl ? v.currentLoggedInUser.MediumPhotoUrl : v.currentLoggedInUser.SmallPhotoUrl}" height="110" width="110" alt="Profile Picture" class="img-round"></img>
+                    <b>
+                        <p style="font-size: 1.6rem; " class="break-word">{!v.currentLoggedInUser.Name}</p>
+                        <p class="slds-text-heading_small break-word" style="font-weight: normal; font-size: 0.9rem;">{!v.currentLoggedInUser.Profile.Name}</p>
+                    </b>
+                </div>                
+            </aura:if>
+            <br/>
+            <!-- Section 2 Ends-->
+            <!-- Section 3 -->
+            <!-- This Part shows the Details of Commission Structure for the current user -->
+            
+            <aura:if isTrue ="{!v.commissionStructure.commissionMaster}">
+                <div class="slds-text-align_center">
+                    <span class="slds-text-heading_medium slds-align_absolute-center commission-master_styles"><b style="font-weight: normal;">Commission Structure</b></span>
+                </div>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="{!v.isAnDRep? 'slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_medium' : 'slds-col slds-size_1-of-1'}">
+                        <aura:if isTrue = "{!v.isAnDRep}">
+                            <p class="slds-text-align_center"><u><b>Commission % Under Target</b></u></p>
+                            <p class="slds-text-align_center" title="{!v.commissionStructure.commissionMaster.Commission_percent_under_target__c +'%'}">{!v.commissionStructure.commissionMaster.Commission_percent_under_target__c}%</p>
+                            <aura:set attribute="else">
+                                <div class="slds-grid slds-wrap slds-grid_align-spread slds-align_absolute-center commission-master_styles" style="{!v.isAnDRep ? '':'padding-left : 6%'}">
+                                    <div class="slds-col slds-size_9-of-12" >
+                                        <span ><u><b>Commission % Under Target</b></u></span>
+                                    </div>
+                                    <div class="slds-col slds-size_3-of-12 slds-text-align_center">
+                                        <span title="{!v.commissionStructure.commissionMaster.Commission_percent_under_target__c +'%'}">{!v.commissionStructure.commissionMaster.Commission_percent_under_target__c}%</span>
+                                    </div>
+                                </div>
+                                <br/>
+                                
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    
+                    <div class="{!v.isAnDRep ? 'slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-bottom_medium' : 'slds-col slds-size_1-of-1'}">
+                        
+                        <p class="{!v.isAnDRep? 'slds-text-align_center':'margin-left'}"><u><b>GP % Targets</b></u></p>
+                        <div class="{!v.isAnDRep ? 'slds-grid slds-wrap slds-grid_align-spread' :'slds-grid slds-wrap slds-grid_align-spread slds-align_absolute-center commission-master_styles'}" style="{!v.isAnDRep ? '':'padding-left : 6%'}">
+                            <aura:iteration items="{!v.commissionStructure.gpPercentTargets}" var="gpTarget">                 
+                                
+                                <div class="slds-col slds-size_9-of-12" >
+                                    <span >{!gpTarget.Type__c}</span>
+                                </div>
+                                <div class="slds-col slds-size_3-of-12 slds-text-align_center">
+                                    <span title="{!gpTarget.Target_Percent__c +'%'}">{!gpTarget.Target_Percent__c}%</span>
+                                </div>
+                                
+                            </aura:iteration> 
+                        </div> 
+                    </div>
+                    <lightning:accordion
+                                         allowMultipleSectionsOpen="true"
+                                         activeSectionName="{!v.activeSections }"
+                                         class="slds-col slds-size_1-of-1"
+                                         >
+                        <lightning:accordionSection name="CommissionTiers" label="Commission Tiers">
+                            <div class="slds-scrollable_x">
+                                <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered No_border">
+                                    <thead>
+                                        <aura:if isTrue = "{!!v.isAnDRep}">  
+                                            <tr class="slds-line-height_reset">
+                                                <th class="None_Background" scope="col" colspan="4">
+                                                    <div class="slds-truncate dealer_contractor_heading" title="Dealer">Dealer</div>
+                                                </th>
+                                            </tr>
+                                        </aura:if>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="None_Background" scope="col">
+                                                <div class="slds-truncate slds-text-align_center" title="Lower Bound">Lower Amount</div>
+                                            </th>
+                                            <th class="None_Background" scope="col">
+                                                <div class="slds-truncate slds-text-align_center" title="Upper Bound">Upper Amount</div>
+                                            </th>
+                                            <th class="None_Background" scope="col">
+                                                <div class="slds-truncate slds-text-align_center" title="Commission Percentage">Commission %</div>
+                                            </th>
+                                            <aura:if isTrue = "{!v.isAnDRep}">                                                                            
+                                                <th class="None_Background" scope="col">
+                                                    <div class="slds-truncate slds-text-align_center" title="Tier Type">Tier Type</div>
+                                                </th>
+                                            </aura:if>
+                                        </tr>
+                                    </thead>                        
+                                    <tbody>
+                                        <aura:if isTrue ="{!v.isAnDRep}">
+                                            <aura:iteration items="{!v.commissionStructure.commissionTiers}" var="item" indexVar="index">
+                                                <tr>
+                                                    <td data-label="Lower Amount" class="No_border">
+                                                        <div class="slds-truncate slds-text-align_center" title="{!item.Lower_Amount__c}">
+                                                            <lightning:formattedNumber value="{!item.Lower_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Upper Amount" class="No_border">
+                                                        <div class="slds-truncate slds-text-align_center" title="{!item.Upper_Amount__c}">
+                                                            {! v.commissionStructure.commissionTiers.length-1 == index? '-':''}
+                                                            <lightning:formattedNumber value="{! v.commissionStructure.commissionTiers.length-1 == index? '-':item.Upper_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                        </div>
+                                                    </td>
+                                                    <td data-label="Commission Percentage" class="No_border">
+                                                        <div class="slds-truncate slds-text-align_center" title="{!item.Commission_Percentage__c+'%'}">{!item.Commission_Percentage__c}%</div>
+                                                    </td>
+                                                    <aura:if isTrue = "{!v.isAnDRep}">  
+                                                        <td data-label="Tier Type" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Tier_Type__c}">{!item.Tier_Type__c}</div>
+                                                        </td>
+                                                    </aura:if>
+                                                </tr>
+                                            </aura:iteration>
+                                            <aura:set attribute="else">
+                                                <aura:iteration items="{!v.dealerTiers}" var="item" indexVar="index">
+                                                    <tr>
+                                                        <td data-label="Lower Amount" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Lower_Amount__c}">
+                                                                <lightning:formattedNumber value="{!item.Lower_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Upper Amount" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Upper_Amount__c}">
+                                                                {! v.dealerTiers.length-1 == index? '-':''}
+                                                                <lightning:formattedNumber value="{! v.commissionStructure.commissionTiers.length-1 == index? '-':item.Upper_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Commission Percentage" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Commission_Percentage__c+'%'}">{!item.Commission_Percentage__c}%</div>
+                                                        </td>
+                                                    </tr>
+                                                </aura:iteration>
+                                                <br/>
+                                                <tr class="slds-line-height_reset">
+                                                    <th class="None_Background" scope="col" colspan="4" style="border-bottom: 1px solid rgb(232,232,232);">
+                                                        <div class="slds-truncate dealer_contractor_heading slds-text-heading_medium" title="Commercial">Commercial</div>
+                                                    </th>
+                                                </tr>
+                                                <aura:iteration items="{!v.commercialTiers}" var="item" indexVar="index">
+                                                    <tr>
+                                                        <td data-label="Lower Amount" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Lower_Amount__c}">
+                                                                <lightning:formattedNumber value="{!item.Lower_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Upper Amount" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Upper_Amount__c}">
+                                                                {! v.commercialTiers.length-1 == index? '-':''}
+                                                                <lightning:formattedNumber value="{! v.commissionStructure.commissionTiers.length-1 == index? '-':item.Upper_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Commission Percentage" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Commission_Percentage__c+'%'}">{!item.Commission_Percentage__c}%</div>
+                                                        </td>
+                                                    </tr>
+                                                </aura:iteration>
+                                                <br/>
+                                                <tr class="slds-line-height_reset">
+                                                    <th class="None_Background" scope="col" colspan="4" style="border-bottom: 1px solid rgb(232,232,232);">
+                                                        <div class="slds-truncate dealer_contractor_heading slds-text-heading_medium" title="Commercial w/o Opportunity">Commercial w/o Opportunity</div>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Commission Percentage" class="No_border" colspan="4">
+                                                        <div class="slds-truncate slds-text-align_center" title="{!v.commissionStructure.commissionMaster.Commercial_without_Opportunity__c+'%'}">{!v.commissionStructure.commissionMaster.Commercial_without_Opportunity__c}%</div>
+                                                    </td>
+                                                </tr>
+                                            </aura:set>
+                                        </aura:if>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </lightning:accordionSection>
+                        
+                        <aura:if isTrue ="{!v.isAnDRep}">
+                            
+                            <div class="slds-grid slds-wrap slds-gutters slds-align_absolute-center commission-master_styles">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-top_small slds-m-bottom_medium">
+                                    <p class="slds-text-align_center"><u><b>Target For EoY Adjustment</b></u></p>
+                                    <p class="slds-text-align_center" title="{!v.commissionStructure.commissionMaster.Target_for_EoY_adjustment__c+'%'}">{!v.commissionStructure.commissionMaster.Target_for_EoY_adjustment__c}%</p>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-top_small slds-m-bottom_medium">
+                                    <p class="slds-text-align_center"><u><b>% For &#60; Retro Threshold EoY Adj. </b></u></p>
+                                    <p class="slds-text-align_center" title="{!v.commissionStructure.commissionMaster.Percent_below_retroactive_EoY_Adj__c+'%'}">{!v.commissionStructure.commissionMaster.Percent_below_retroactive_EoY_Adj__c}%</p>
+                                </div>
+                            </div>
+                            <aura:set attribute="else">
+                                <lightning:accordionSection name="TargetForEoYAdjustment" label="Targets For EOY Adjustment">
+                                    
+                                    <div class="slds-scrollable_x">
+                                        <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered No_border">
+                                            <thead>
+                                                <tr class="slds-line-height_reset">
+                                                    <th class="None_Background" scope="col">
+                                                        <div class="slds-truncate slds-text-align_center" title="Type">Type</div>
+                                                    </th>
+                                                    <th class="None_Background" scope="col">
+                                                        <div class="slds-truncate slds-text-align_center" title="Target">Target (%)</div>
+                                                    </th>
+                                                </tr>
+                                            </thead>                        
+                                            <tbody>
+                                                <aura:iteration items="{!v.commissionStructure.eoyMarginTargets}" var="item">
+                                                    <tr>
+                                                        <td data-label="Type" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Type__c}">
+                                                                {!item.Type__c}
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="Target" class="No_border">
+                                                            <div class="slds-truncate slds-text-align_center" title="{!item.Target__c+'%'}">
+                                                                {!item.Target__c}%
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </lightning:accordionSection>
+                            </aura:set>
+                        </aura:if>
+                        <lightning:accordionSection name="EoYBonusTargets" label="EoY Bonus Targets">
+                            
+                            <div class="slds-scrollable_x">
+                                <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered No_border">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th class="None_Background" scope="col">
+                                                <div class="slds-truncate slds-text-align_center" title="Amount">Amount</div>
+                                            </th>
+                                            <th class="None_Background" scope="col">
+                                                <div class="slds-truncate slds-text-align_center" title="Bonus">Bonus</div>
+                                            </th>
+                                        </tr>
+                                    </thead>                        
+                                    <tbody>
+                                        <aura:iteration items="{!v.commissionStructure.eoyBonusTarget}" var="item">
+                                            <tr>
+                                                <td data-label="Amount" class="No_border">
+                                                    <div class="slds-truncate slds-text-align_center" title="{!item.Amount__c}">
+                                                        <lightning:formattedNumber value="{!item.Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                    </div>
+                                                </td>
+                                                <td data-label="Bonus" class="No_border">
+                                                    <div class="slds-truncate slds-text-align_center" title="{!item.Bonus__c}">
+                                                        <lightning:formattedNumber value="{!item.Bonus__c}" style="currency" currencyCode="USD" maximumFractionDigits="0" />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </lightning:accordionSection>
+                    </lightning:accordion>
+                </div>
+                
+            </aura:if>
+        </div>
+        <!-- Section 3 Ends-->
+    </lightning:card>   
+    <!-- Body Ends-->
+</aura:component>

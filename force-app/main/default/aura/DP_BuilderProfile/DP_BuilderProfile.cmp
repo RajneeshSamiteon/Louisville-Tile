@@ -1,0 +1,182 @@
+<aura:component Controller="DealerProfileController"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" 
+                  value="{!this}" 
+                  action="{!c.doInit}"
+                  description=" For Reload The Page"/>
+    <aura:attribute name="accountName" 
+                    type="String" 
+                    description="Get Account Name"/>
+    <aura:attribute name="currentYear" 
+                    type="String" 
+                    description="Get Year"/>
+    <aura:attribute name="currentDate" 
+                    type="String" 
+                    description="Get Year"/>
+    <aura:attribute name="buttonDisable" 
+                    type="Boolean" 
+                    default="true"
+                    description="for button Disable"/>
+    <aura:attribute name="isShowSpinner" 
+                    type="Boolean" default="true" />
+    <aura:method name="reloadMethod" action="{!c.doInit}" />
+    <aura:attribute name="recordId" 
+                    type="String" 
+                    description="Get AccountId OnLoad"/>
+    <aura:attribute name="storeAllCreatedRecord" 
+                    type="Object[]"
+                    description="This's store all dealer created records"/>
+    <aura:attribute name="createdYear" 
+                    type="List" 
+                    description="for Year Picklist" />
+    <aura:attribute name="homeBuilderTypePicklist" type="List"/>
+    <aura:attribute name="selectionMade" type="List"/>
+    <aura:attribute name="currentCategory" type="String"/>
+    <aura:attribute name="builderRecord" 
+                    type="Object" 
+                    description="for record save"/>
+    <aura:attribute name="builderFlooringRecords" 
+                    type="Object[]" 
+                    description="for record save"/>
+    <lightning:tabset selectedTabId="one" >
+        <lightning:tab label="Sales &amp; Market" id="one">
+            <article class="slds-card slds-wrap slds-p-vertical_x-small slds-p-bottom_x-small bgcolor">
+                <div class="slds-grid slds-wrap slds-gutters slds-p-horizontal_x-large ">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12">
+                        <!--span><div class=" slds-text-heading_small"><b>Annual Sales and Purchase Data</b></div></span-->
+                        <div class="slds-grid slds-wrap slds-size_12-of-12 ">
+                            <div class="slds-col slds-medium-size_12-of-12  slds-small-size_1-of-1">
+                                <lightning:input  aura:id="salesId" name="avg Home value Sell Price" formatter="currency" type="number" label="Avg. Home value Sell Price" variant="label-inline" value="{!v.builderRecord.Avg_Home_value_Sell_Price__c}"  />
+                            </div>
+                            <div class="slds-col slds-medium-size_12-of-12  slds-small-size_1-of-1">
+                                <lightning:input  aura:id="salesId" name="Homes Built Annually" label="Homes Built Annually" variant="label-inline" value="{!v.builderRecord.Homes_Built_Annually__c}" />
+                            </div>
+                            <div class="slds-col slds-medium-size_12-of-12  slds-small-size_1-of-1 slds-form_horizontal">
+                                <lightning:select  label="Home Builder Type" variant="label-inline" value="{!v.builderRecord.Home_Builder_Type__c}" >
+                                    <option value="">--None--</option>
+                                    <aura:iteration items="{!v.homeBuilderTypePicklist}" var="homeType" indexVar="key" >
+                                        <option text="{!homeType}" value="{!homeType}" />
+                                    </aura:iteration>
+                                </lightning:select>   
+                            </div>
+                            <div class="slds-col slds-medium-size_12-of-12  slds-small-size_1-of-1 slds-form_horizontal">
+                                <lightning:select  label="Selection Made" variant="label-inline" value="{!v.builderRecord.Selections_Made__c}" >
+                                    <option value="">--None--</option>
+                                    <aura:iteration items="{!v.selectionMade}" var="selection" indexVar="key">
+                                        <option text="{!selection}" value="{!selection}" />
+                                    </aura:iteration>
+                                </lightning:select>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-p-top_small">
+                        <span><div class="slds-text-heading_small "><b>Market Share/Top Selling Styles</b></div></span>
+                    </div>
+                </div>
+                <div class="slds-scrollable">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Example default base table of Opportunities">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Opportunity Name">LTD sales</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Account Name">Sales volume</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="slds-hint-parent">
+                                <th data-label=" LTD Tile + Ancillary Sales" scope="row">
+                                    <div class="slds-truncate" >
+                                        LTD Tile + Ancillary Sales
+                                    </div>
+                                </th>
+                                <td data-label="Ltd tile with Ancillary">
+                                    <lightning:input name="ltdTileAndAncillary"  class="slds-p-top_xx-small" style="border:none" type="number" formatter="currency" step="0.01" variant="label-hidden" disabled="true" value="{!v.builderRecord.LTD_Tile_Ancillary_Sales__c}"/>
+                                    <!--div class="slds-truncate">${!v.dealerProfileCalculation.ltdTileAndAncillarySales}</div-->
+                                </td>
+                            </tr>
+                            <tr class="slds-hint-parent">
+                                <th data-label=" LTD Tile Sales" scope="row">
+                                    <div class="slds-truncate">
+                                        LTD Tile Sales
+                                    </div>
+                                </th>
+                                <td data-label="Ltd tile sale">
+                                    <lightning:input name="ltdTileAndAncillary"  class="slds-p-top_xx-small" style="border:none" type="number" formatter="currency" step="0.01" variant="label-hidden"  value="{!v.builderRecord.LTD_Tile_Sales__c}" onkeyup="{!c.getTileDetails}"/>
+                                    
+                                    <!--div class="slds-truncate" >${!v.dealerProfileCalculation.ltdTileSale}</div-->
+                                </td>
+                            </tr>
+                            <tr class="slds-hint-parent">
+                                <th data-label="Opportunity Name" scope="row">
+                                    <div class="slds-truncate" >
+                                        LTD Ancillary Sales
+                                    </div>
+                                </th>
+                                <td data-label="Account Name">
+                                    <lightning:input name="ltdTileAndAncillary"  class="slds-p-top_xx-small" style="border:none" type="number" variant="label-hidden"  formatter="currency" step="0.01"  value="{!v.builderRecord.LTD_Ancillary_Sales__c}" onkeyup="{!c.getAncilliarySales}"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="slds-p-left_large slds-p-right_large  slds-card slds-m-top_large">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_12-of-12 slds-p-bottom_small">
+                            <span><div class="slds-text-heading_small"><b>Builder-Flooring Info</b></div></span>
+                        </div>
+                    </div>
+                    <div class="slds-scrollable" style="height:10rem;"> 
+                        <c:DP_BuilderFlooringInfo builderFlooringRecords="{!v.builderFlooringRecords}"  />
+                    </div>
+                </div>
+            </article>
+            <div class="slds-clearfix">
+                <div class="slds-float_right">
+                    
+                    <aura:if isTrue="{!v.buttonDisable}">
+                        <lightning:button label="Save" 
+                                          iconName="utility:save" 
+                                          iconPosition="right" 
+                                          class="slds-m-vertical_small slds-m-horizontal_small" 
+                                          variant="brand" 
+                                          onclick ="{!c.submitDetails}" 
+                                          />
+                        <aura:set attribute="else">
+                            <lightning:button label="Update" 
+                                              iconName="utility:save" 
+                                              iconPosition="right" 
+                                              class="slds-m-vertical_small slds-m-horizontal_small" 
+                                              variant="brand" 
+                                              onclick ="{!c.submitDetails}"
+                                              />
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+        </lightning:tab>
+        <lightning:tab label="Ceramic Tile" id="two" >
+            <c:CeramicTileForOtherProfile aura:id="ceramicID" recordId="{!v.recordId}" />
+        </lightning:tab>
+        <lightning:tab label="Ancillary Items" id="three" >
+            <c:DP_DealerProfileAncillaryForOther aura:id="ancillaryId" recordId="{!v.recordId}" />
+        </lightning:tab>
+        <lightning:tab label="LVT " id="four">
+            <c:DP_OtherProfileLVT aura:id="lVTId" recordId="{!v.recordId}" />
+        </lightning:tab>
+        <lightning:tab  label="Laminate" id="five" >
+            <c:DP_OtherProfileLamiante aura:id="lamianteId" recordId="{!v.recordId}" />
+        </lightning:tab>
+    </lightning:tabset>
+    <aura:if isTrue="{!v.isShowSpinner}">
+        <div class="slds-spinner_container"> 
+            <div role="status" class="slds-spinner_large slds-spinner_brand"> 
+                <lightning:spinner alternativeText="Loading" size="large" /> 
+            </div> 
+        </div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,60 @@
+.THIS.bodyStyle{
+    width: 100%;
+    background: white;
+    padding: 2%;
+}
+.THIS .DatePicklistDesign{
+    margin-bottom: 2%;
+}
+.THIS .breakDownTable{
+    max-height: 70vh;
+    overflow: auto;
+    border: 1px solid rgb(137 137 137 / 38%);
+}
+.THIS .heading{
+    font-size: 1rem;
+    font-weight: bolder;
+    position: relative;
+    top: 1vh;
+}
+.THIS .table{
+    max-height: 50vh;
+    overflow: auto;
+    max-width: 100vw;
+}
+.THIS .commissionDetailBox{
+    border: 1px solid rgb(6 6 6 / 10%);
+    background: #fbfdff;
+    border-radius: 9px;
+}
+.THIS .mainHeading{
+    /* border: 2px solid; */
+    height: 10vh;
+    position: relative;
+    top: 0vh;
+    background: rgb(4 40 58);
+    color: white;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    font-size: 2rem;
+    font-weight: bolder;
+    box-shadow: 2px 3px 7px 0 rgb(0 0 0 / 51%);
+}
+.THIS .slds-form-element__icon{
+    padding-top: 0;
+}
+.THIS .slds-button__icon {
+    width: 65% !important;
+    color: hsl(204deg 86% 25%);
+}
+.THIS .slds-form-element__label{
+    font-weight: bolder;
+    font-size: 1rem !important;
+}
+.THIS .Refrence_Name_Width{
+    min-width: 20vw;
+    max-width: 25vw;
+    white-space : pre-wrap;
+    
+}

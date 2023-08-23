@@ -1,0 +1,73 @@
+<aura:component controller="DealerProfileController" 
+                extends="c:HandleErrorModal"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+        <aura:attribute name="recordsId" type="String" />
+
+    <!--This attribute use for dynamic populate Account category-->
+   
+    <aura:attribute name="builderFlooringRecords" type="Object[]" />
+    <aura:method name="childValidation" action="{!c.handleValidation}" access="public" />
+    <aura:attribute name="deleteRow" type="Integer"  />
+    <aura:handler name="removeItem" event="c:DisplayItemRemove" action="{!c.removeItems}"/>
+
+    <div class="slds-p-top_none ">
+        <div class="slds-scrollable" style="height:10rem;">
+
+        <table class="slds-table">
+            
+            <thead>
+                <tr>
+                    <div class="slds-grid  color">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label">Flooring category</label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label" >Supplier</label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label" >Installer Selected By</label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label" >Installer Name</label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label">Installer Name #2</label>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12 ">
+                            <label class="slds-form-element__label" >Installer Name #3</label>
+                        </div>
+                        
+                        <!--div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-12 slds-align_absolute-center">
+                            <label class="slds-form-element__label" >Action</label>
+                        </div-->
+                    </div>
+                </tr>
+            </thead>
+            
+            <tbody>
+                
+                 <aura:iteration items="{!v.builderFlooringRecords}" var="BFR" indexVar="index">
+                                        <c:DP_BuilderFlooringInfoBox builderFlooring="{!BFR}" index="{!index}" />
+                 </aura:iteration>
+            </tbody>
+        </table>
+            <div class="slds-clearfix">
+            <div class="slds-float_right">
+                <!-- Add More Sample Button -->
+                <lightning:button label="Add New Entry" 
+                                  iconName="utility:add" 
+                                  iconPosition="right" 
+                                  class="slds-m-vertical_small slds-m-horizontal_small" 
+                                  variant="brand" 
+                                  onclick ="{!c.addBuilderFlooring}" 
+                                  />
+                
+            </div>
+        </div>
+        </div>
+        
+    </div>  
+    
+    
+</aura:component>

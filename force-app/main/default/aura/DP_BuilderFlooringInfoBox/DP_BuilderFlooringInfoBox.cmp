@@ -1,0 +1,58 @@
+<aura:component Controller="DealerProfileController" 
+                extends="c:HandleErrorModal"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="openModal" type="Boolean" default="false"/>
+    <aura:attribute name="InstallerType" type="List"/>
+    <!--This attribute use for dynamic populate sections-->
+    <aura:attribute name="selections" type="List"/>
+            <aura:attribute name="recordsId" type="String" />
+
+    <aura:attribute name="builderFlooring" type="Object"
+                    description="this's object used for child object "/>
+    
+    <aura:attribute name="recordId" type="String" description="get record id on doinit"/>
+    <aura:attribute name="dealerType" type="String"/>
+    <aura:attribute name="createdDate" type="String" description="for Year Picklist" />
+    <aura:registerEvent name="removeItem" type="c:DisplayItemRemove" />
+    <aura:attribute name="index" type="Integer"/>
+    
+    <table>  
+        <thead></thead>
+        <tbody>
+            
+            <tr class="slds-box">
+                <div class="slds-grid ">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                        <lightning:input aura:id="DCField" name=""  variant="label-hidden" placeholder="Flooring category" value='{!v.builderFlooring.Flooring_Category__c}' onchange="{!c.updatefield}" /> 
+                    </div>
+                    
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                        <lightning:input aura:id="DCField" name="" variant="label-hidden" placeholder="Supplier" value='{!v.builderFlooring.Supplier__c}' onchange="{!c.updatefield}"/> 
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                        <lightning:select aura:id="DCField" name="" variant="label-hidden" class="label-hide" value='{!v.builderFlooring.Installer_Type__c}' onchange="{!c.updatefield}" >
+                            <option value="">--Select Type--</option>
+                            <aura:iteration items="{!v.InstallerType}" var="ac" indexVar="key">
+                                <option text="{!ac}" value="{!ac}" />
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12"> 
+                        <lightning:input aura:id="DCField" placeholder="Installer Name" name="" variant="label-hidden"  value='{!v.builderFlooring.Installer_Name__c}' onchange="{!c.updatefield}" /> 
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                    <lightning:input aura:id="DCField" placeholder="Installer Name #2" name="" variant="label-hidden"  value='{!v.builderFlooring.Installer_Name_2__c}' onchange="{!c.updatefield}" /> 
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-12">
+                        <lightning:input aura:id="DCField" placeholder="Installer Name #3" name="" variant="label-hidden"  value='{!v.builderFlooring.Installer_Name_3__c}'  onchange="{!c.updatefield}"  /> 
+                    </div>
+                   
+                </div>
+            </tr>
+            
+        </tbody>
+    </table>
+    
+    
+</aura:component>

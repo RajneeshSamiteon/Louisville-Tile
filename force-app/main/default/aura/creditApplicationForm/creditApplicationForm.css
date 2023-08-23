@@ -1,0 +1,14 @@
+.THIS .slds-m-bottom {
+    margin-bottom : -15px;
+}
+
+.THIS.slds-m-top-_extra-large {
+    margin-top : 110px;
+}
+
+.THIS .slds-bg-color {
+    background : #FFFFFF;
+    width : 400px;
+    border : 2px solid #2574a9;
+    border-radius : 5px;
+}

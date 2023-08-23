@@ -1,0 +1,294 @@
+<!--************************************************
+     * Aura component Name : MC_Commissions
+     * Created By : Samiteon Team 
+     => we'll be showing the all the monthly and yearly commission
+  record.  
+ * NOTE :- Edit at your own risk.
+    *************************************************-->
+<aura:component controller="MyCommissionController"
+                extends="c:HandleErrorModal"
+                access="global">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:handler name="change" value="{!v.currentLoggedInUser}" action="{!c.handleUserChanges}"/>
+    <aura:attribute name="monthList" type="List" description ="This contain month name"/>
+    <aura:attribute name="masterMonthList" type="object[]" description ="This contain select month"/>
+    <aura:attribute name="monthVeiwStatus" type="boolean" default="false" description ="This contain eoyCommissionStatus status"/>
+    <aura:attribute name="yearList" type="List" description ="This contain Year name"/>
+    <aura:attribute name="selectedMonth" type="string" description ="This contain select month"/>
+    <aura:attribute name="selectedYear" type="string" description ="This contain Select Year"/>
+    <aura:attribute name="spinner" type="boolean" default="false" description ="This contain eoyCommissionStatus status"/>
+    <aura:attribute name="eoyCommissionStatus" type="boolean" default="false" description ="This contain month name"/>
+    <aura:attribute name="currentLoggedInUser" type="object" description="While intializing the component, This attribute will popuplate with current logged in user."/>
+    <aura:attribute name='MastermonthlyBreakDowns' type="object[]" description="BreakDown For Current Logged in user"/> 
+    <aura:attribute name='monthlyBreakDown' type="object[]" description="BreakDown For Current Logged in user"/>
+    <aura:attribute name='MastermonthlyCommissions' type="object[]" description="monthlyCommission For Current Logged in user"/> 
+    <aura:attribute name='SelectedMonthlyCommission' type="object" description="Selected monthlyCommission For Current Logged in user"/> 
+    <aura:attribute name='isUserHasdata' type="boolean" default='true' description="this is for does the user have any EOY sales commission data and their respected child object's."/> 
+    <aura:attribute name='masterEOYSalesCommission' type="object[]" description="Selected monthlyCommission For Current Logged in user"/> 
+    <aura:attribute name='EOYSalesCommission' type="object" description="Selected monthlyCommission For Current Logged in user"/> 
+    <aura:attribute name="isAnDRep" type="Boolean" description="contains true if profile is Sales Representative - AD"/>
+    <lightning:card>
+        <aura:if isTrue="{!v.isUserHasdata}">
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning:select name="year" label="Select Year" aura:id="year" value="{!v.selectedYear}" class="DatePicklistDesign" onchange="{!c.updaterecordThroughYear}">
+                            <aura:iteration items="{!v.yearList}" var="year">
+                                <option value="{!year.value}" selected="{!year.value}">{!year.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                    <div class="slds-col">
+                        <lightning:select name="month" label="Select Month" aura:id="month" value="{!v.selectedMonth}" class="DatePicklistDesign" onchange="{!c.updaterecordThroughMonth}">
+                            <aura:iteration items="{!v.monthList}" var="month">
+                                <option value="{!month.value}" selected="{!month.value}">{!month.label}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.eoyCommissionStatus}">
+                    <div class="slds-grid slds-m-top_medium  slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_3-of-12  slds-medium-size_1-of-12">
+                            <lightning:icon iconName="action:record" size="small" alternativeText="Indicates approval"/>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1  slds-medium-size_11-of-12">
+                            <p class='heading'>EOY Sales Commission's</p>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-m-top_medium ">            
+                        <div class="slds-col slds-col slds-size_12-of-12">
+                            <lightning:card class='commissionDetailBox'>
+                                <aura:if isTrue="{!Not(empty(v.EOYSalesCommission))}">
+                                    <p class="slds-p-horizontal_small">
+                                        <div class="slds-grid slds-m-top_medium  slds-wrap slds-gutters">
+                                            <div class="slds-col slds-size_1-of-1  slds-medium-size_6-of-12">
+                                                <div>
+                                                    <span>Bonus</span> <lightning:helptext iconName='utility:info_alt' content="This contain Bonus Based on your annual sales."/>  
+                                                    : <lightning:formattedNumber value="{!v.EOYSalesCommission.Bonus__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /><br/><br/>
+                                                </div>
+                                                <div>
+                                                    <span>Eligible Margin</span> <lightning:helptext iconName='utility:info_alt' content="This contain Eligible margin based of your annual sales."/>  
+                                                    : <lightning:formattedNumber value="{!v.EOYSalesCommission.Eligible_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /><br/><br/>
+                                                </div>
+                                                <div>
+                                                    <span>EoY adjustment</span> <lightning:helptext iconName='utility:info_alt' content="message"/>  
+                                                    : <lightning:formattedNumber value="{!v.EOYSalesCommission.EoY_adjustment__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /><br/><br/>
+                                                </div>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-1  slds-medium-size_6-of-12">
+                                                <div>
+                                                    <span>Total Commission</span><lightning:helptext iconName='utility:info_alt' content="This shows the total commission This current month."/>  
+                                                    : <lightning:formattedNumber value="{!v.EOYSalesCommission.Total_Commission__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" />  <br/><br/>
+                                                </div>
+                                                <div>
+                                                    <span>Total Margin</span><lightning:helptext iconName='utility:info_alt' content="This shows the total margin to your total sales"/>  
+                                                    : <lightning:formattedNumber value="{!v.EOYSalesCommission.Total_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /><br/><br/>
+                                                </div>
+                                                <div>
+                                                    <span>Over All Margin percent</span> <lightning:helptext iconName='utility:info_alt' content="This contain the over all margin percetange based on annual sales."/>  
+                                                    : {!v.EOYSalesCommission.Over_All_Margin_percent__c} %<br/><br/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p>
+                                    <aura:set attribute="else">
+                                        <p class="slds-p-horizontal_small">
+                                            No EOY Sales Commission's Record Found for Selected Date.
+                                        </p>
+                                    </aura:set>
+                                </aura:if>
+                            </lightning:card>
+                        </div>
+                    </div>
+                </aura:if>
+                <div class="slds-grid slds-m-top_medium  slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_3-of-12  slds-medium-size_1-of-12">
+                        <lightning:icon iconName="action:record" size="small" alternativeText="Indicates approval"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1  slds-medium-size_11-of-12">
+                        <p class='heading'>Monthly Commission's</p>
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters slds-m-top_medium">            
+                    <div class="slds-col  slds-size_12-of-12">
+                        <lightning:card class='commissionDetailBox'>
+                            <aura:if isTrue="{!Not(empty(v.SelectedMonthlyCommission))}">
+                                <p class="slds-p-horizontal_small">
+                                    <div class="slds-grid slds-m-top_medium  slds-wrap slds-gutters">
+                                        <div class="slds-col slds-size_1-of-1  slds-medium-size_6-of-12">
+                                            <div>
+                                                <span>Ancillary Margin</span><lightning:helptext iconName='utility:info_alt' content="Sum of all ancillary items margin."/> 
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Ancillary_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" />
+                                                <br/> <br/>
+                                            </div>
+                                            <div>
+                                                <span>Tile Margin</span> <lightning:helptext iconName='utility:info_alt' content="Sum of all tile items margin"/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Tile_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /><br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Ancillary Sale</span><lightning:helptext iconName='utility:info_alt' content="Total Ancillary sale for the month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Ancillary_Sale__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Tile Sale</span><lightning:helptext iconName='utility:info_alt' content="Total Tile sale for the month"/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Tile_Sale__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Total Invoice Margin Ancillary Split</span><lightning:helptext iconName='utility:info_alt' content="Overall ancillary margin split for selected month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Total_Invoice_Ancillary_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Total Invoice Margin Tile Split</span><lightning:helptext iconName='utility:info_alt' content="Overall tile margin split for selected month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Total_Invoice_Tile_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" />
+                                            </div>  <br/>
+                                            <div>
+                                                <span>Total Invoice Margin Split</span><lightning:helptext iconName='utility:info_alt' content="Total Invoice Margin split for selected month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Total_Invoice_Tile_Margin__c + v.SelectedMonthlyCommission.Total_Invoice_Ancillary_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" />
+                                            </div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-1  slds-medium-size_6-of-12">
+                                            <div>
+                                                <span>Eligible Margin</span> <lightning:helptext iconName='utility:info_alt' content="Overall eligible margin cumulative."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Eligible_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Met Margin Target</span> <lightning:helptext iconName='utility:info_alt' content="if you meet GP percent target it will be 'Yes' else 'No'."/>  
+                                                : <aura:if  isTrue="{!v.SelectedMonthlyCommission.Target_Met__c}">
+                                                Yes
+                                                <aura:set attribute="else">
+                                                    No
+                                                </aura:set>
+                                                </aura:if>
+                                                <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Total Commission YTD</span><lightning:helptext iconName='utility:info_alt' content="Total earned commission YTD."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Total_Commission__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <div>
+                                                <span>Payable Commission For The Month</span><lightning:helptext iconName='utility:info_alt' content="Total payable commission for the month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Payable_Commission__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            <!--
+                                            <div>
+                                                <span>Commission Paid For The Month</span><lightning:helptext iconName='utility:info_alt' content="Commission paid for hte month."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Paid_Commission__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                            -->
+                                            <div>
+                                                <span>Actual Commission Paid YTD</span><lightning:helptext iconName='utility:info_alt' content="Actual Commission Paid YTD."/>  
+                                                : <lightning:formattedNumber value="{!v.SelectedMonthlyCommission.Actual_Commission_Earned__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /> <br/><br/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p>
+                                <aura:set attribute="else">
+                                    <p class="slds-p-horizontal_small">
+                                        No Monthly Commission's Record Found for Selected Date.
+                                    </p>
+                                </aura:set>
+                            </aura:if>
+                        </lightning:card>
+                    </div>
+                </div>
+                <div class="slds-grid slds-m-top_medium  slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_3-of-12  slds-medium-size_1-of-12">
+                        <lightning:icon iconName="action:record" size="small" alternativeText="Indicates approval"/>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1  slds-medium-size_11-of-12">
+                        <p class='heading'>Monthly Commission's Break-Down</p>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.spinner}">
+                    <lightning:spinner  variant ='Brand' alternativeText="Loading" size="medium" />
+                    <aura:set attribute="else">
+                        <div class='table slds-m-top_medium'>
+                            <table class="slds-table slds-table--bordered slds-table--striped breakDownTable">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><span class="slds-truncate">Reference Name</span></th>
+                                        <th scope="col"><span class="slds-truncate">Reference By</span></th>
+                                        <th scope="col"><span class="slds-truncate">Total Sales</span></th>
+                                        <th scope="col"><span class="slds-truncate">Gross margin</span></th>
+                                        <th scope="col"><span class="slds-truncate">Split %</span></th>
+                                        <th scope="col"><span class="slds-truncate">Total margin</span></th>
+                                        <th scope="col"><span class="slds-truncate">Elgible Amount</span></th>
+                                        <aura:if isTrue ="{!v.isAnDRep}">
+                                            <th scope="col"><span class="slds-truncate">Tile Target Met</span></th>
+                                            <th scope="col"><span class="slds-truncate">Ancillary Target Met</span></th>
+                                            <aura:set attribute="else">
+                                                <th scope="col"><span class="slds-truncate">Bill To Group</span></th>
+                                                <th scope="col"><span class="slds-truncate">Margin %</span></th>
+                                                <th scope="col"><span class="slds-truncate">Target Met</span></th>
+                                            </aura:set>
+                                        </aura:if>
+                                    </tr>
+                                </thead>
+                                <aura:if isTrue="{!Not(empty(v.monthlyBreakDown))}">
+                                    <tbody>
+                                        <aura:iteration items="{!v.monthlyBreakDown}" var="breakDown">
+                                            <tr>
+                                                <aura:if isTrue="{!breakDown.Opportunity__c}">
+                                                    <td class="Refrence_Name_Width">{!breakDown.Opportunity__r.Name}</td>
+                                                    <td><p>Opportunity</p></td>
+                                                    <aura:set attribute="else">
+                                                        <td class="Refrence_Name_Width">{!breakDown.Account__r.Name}</td>
+                                                        <td><p>Account</p></td>
+                                                    </aura:set>   
+                                                </aura:if>
+                                                <td><lightning:formattedNumber value="{!breakDown.Total_sales__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /></td>
+                                                <td><lightning:formattedNumber value="{!breakDown.Total_Margin_without_Split__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /></td>
+                                                <td>{!breakDown.Commission_Split_Percentage__c}%</td>
+                                                <td><lightning:formattedNumber value="{!breakDown.Total_Margin__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /></td>
+                                                <td><lightning:formattedNumber value="{!breakDown.Elgible_Amount__c}" style="currency" currencyCode="USD" maximumFractionDigits="2" /></td>
+                                                <aura:if isTrue ="{!v.isAnDRep}">
+                                                    <td>
+                                                        <aura:if  isTrue="{!breakDown.Tile_Margin_Target_Met__c}">
+                                                            Yes
+                                                            <aura:set attribute="else">
+                                                                No
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </td>
+                                                    <td> 
+                                                        <aura:if  isTrue="{!breakDown.Ancillary_Margin_Target_Met__c}">
+                                                            Yes
+                                                            <aura:set attribute="else">
+                                                                No
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </td>
+                                                    <aura:set attribute="else">
+                                                        <td>{!breakDown.Bill_To_Group__c}</td>
+                                                        <td>{!breakDown.Margin_Percentage__c}%</td>
+                                                        <td>
+                                                            <aura:if  isTrue="{!breakDown.Met_Margin__c}">
+                                                                Yes
+                                                                <aura:set attribute="else">
+                                                                    No
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </td>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </tr>
+                                        </aura:iteration> 
+                                    </tbody>
+                                    <aura:set attribute="else">
+                                        <tr>
+                                            <td colspan="4"> No Record for monthly Break-Down For selected Date</td>
+                                        </tr>
+                                    </aura:set>
+                                </aura:if>
+                            </table>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </div>
+            <aura:set attribute="else">
+                <strong class="slds-m-left_large">This user doesn't have relevent commission data to show</strong>
+            </aura:set>
+        </aura:if>
+    </lightning:card>
+</aura:component>

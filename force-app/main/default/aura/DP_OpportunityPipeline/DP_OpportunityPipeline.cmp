@@ -1,0 +1,275 @@
+<aura:component Controller="DealerProfileController"
+                extends="c:HandleErrorModal"
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="dealerCustomer"
+                    type="Object[]" 
+                    default="[]"
+                    description="This Object Store List of Child Object(dealerCustomer) data"/>
+    <aura:handler name="init" 
+                  value="{!this}" 
+                  action="{!c.doInit}"
+                  description=" For Reload The Page"/>
+    <aura:method name="callDoinitMethod" 
+                 action="{!c.doInit}"/> 
+    <aura:attribute name="totalSold"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="totalDesignAndPlanning"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="totalQuoting"
+                    type="currency" default="0.00"/>
+    <aura:attribute name="totalPostBidding"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="totalOnOrder"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="totalContractorSubmittals"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="totalClosedLost"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="capturePercentageOfSoldAmount"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="capturePercentageOfLostAmount"
+                    type="Decimal" default="0.0"/>
+    <aura:attribute name="currentCategory" 
+                    type="String"
+                    description="This's store for CurrentAccount Categary"/>
+    <aura:attribute name="recordId" 
+                    type="String" 
+                    description="Get AccountId OnLoad"/>
+    <aura:attribute name="accountName" 
+                    type="String" 
+                    description="Get Account Name"/>
+    <aura:attribute name="dealerProfile" 
+                    type="Object" 
+                    description="Get Account Name"/>
+    <aura:attribute name="isShowSpinner" 
+                    type="Boolean" default="true" />
+    <aura:attribute name="isButtonDisable" 
+                    type="Boolean" default="true" />
+    <aura:attribute name="lastFourAccountCategories" type="List"/>
+    <lightning:tabset selectedTabId="one" >
+        <lightning:tab label="Sales &amp; Market" id="one">
+            <article class="slds-card slds-wrap slds-p-vertical_x-small slds-p-bottom_x-small bgcolor">
+                <div class="slds-card__header slds-grid slds-p-bottom_small">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                            <h4 class="slds-line-height_reset ">
+                                    <span><b>Opportunity Pipeline / Capture - </b> </span><span style="color:blue;">(Please note that the values shown below represent commercial opportunity types only)</span>
+                            </h4>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-grid slds-gutters display">
+                    <div class="slds-col slds-size_2-of-3">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Opportunity Status">Opportunity Status</div>
+                                    </th>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate" title="Account Name">Value of Opportunities</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Design and Planning">Design and Planning
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                        <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalDesignAndPlanning}" 
+                                                                   format="$#,###.00'"/>
+                                       
+                                    </td>
+                                    
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Quoting">Quoting
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                        <lightning:formattedNumber style="currency" value="{!v.totalQuoting}" format="$#,###.00'"/>
+                                        <!--div class="slds-truncate" style="currency" format="$#,###.00'" title="Cloudhub">${!v.totalQuoting}</div-->
+                                    </td>
+                                    
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Post Bidding">Post Bidding
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                        <lightning:formattedNumber style="currency" value="{!v.totalPostBidding}" format="$#,###.00'"/>
+                                    </td>
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Contractor Submittals">Contractor Submittals
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                              			<lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalContractorSubmittals}" 
+                                                                   format="$#,###.00'"/>
+                                    </td>
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="On Order">On Order
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                        <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalOnOrder}" 
+                                                                   format="$#,###.00'"/>
+                                    </td>
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Sold">Sold
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                        <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalSold}" 
+                                                                   format="$#,###.00'"/>
+                                       
+                                    </td>
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Closed Lost">Closed Lost
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                         <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalClosedLost}" 
+                                                                   format="$#,###.00'"/>
+                                    </td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-m-top_large">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-label="Example table of Opportunities with vertical borders">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                  <th class="" scope="col"  >
+                                        <div class="slds-truncate slds-align_absolute-center" title="Capture %"></div>
+                                    </th>
+                                   <th class="" scope="col"  >
+                                        <div class="slds-truncate slds-align_absolute-right" title="Capture %">$ Amount</div>
+                                    </th> 
+                                    <th class="" scope="col"  >
+                                        <div class="slds-truncate slds-align_absolute-right slds-text-title_bold" title="Capture %">%</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Amount Sold">Amount Sold
+                                        </div>
+                                    </th>
+                                      <td data-label="Amount">
+                                          <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalSold}" 
+                                                                   format="$#,###.00'"/>
+                                       
+                                    </td>
+                                    <td data-label="Amount">
+                                        <div class="slds-truncate" title="Cloudhub">{!v.capturePercentageOfSoldAmount}%</div>
+                                    </td>
+                                   
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th data-label="Opportunity Name" scope="row">
+                                        <div class="slds-truncate" title="Closed Lost">Closed Lost
+                                        </div>
+                                    </th>
+                                    <td data-label="Amount">
+                                       <lightning:formattedNumber
+                                                                   style="currency" 
+                                                                   value="{!v.totalClosedLost}" 
+                                                                   format="$#,###.00'"/>
+                                    </td>
+                                    <td data-label="Amount">
+                                        <div class="slds-truncate" title="Cloudhub">{!v.capturePercentageOfLostAmount}%</div>
+                                    </td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="slds-p-left_large slds-p-right_large  slds-card slds-m-top_large">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_12-of-12 slds-p-bottom_small">
+                            <h4 class="slds-line-height_reset ">
+                                    <span><b>Accounts' Clients</b></span>
+                            </h4>
+                        </div>
+                        
+                    </div>
+                    <div class="slds-scrollable_y" style="height:10rem;"> 
+                        <c:DP_DealerCustomers dealerCustomer="{!v.dealerCustomer}" recordsId="{!v.recordId}"/>
+                    </div>
+                </div>
+                
+            </article>
+            
+            <div class="slds-clearfix">
+                <div class="slds-float_right">
+                    
+                    <aura:if isTrue="{!v.isButtonDisable}">
+                        <lightning:button label="Save" 
+                                          iconName="utility:save" 
+                                          iconPosition="right" 
+                                          class="slds-m-vertical_small slds-m-horizontal_small" 
+                                          variant="brand" 
+                                          onclick ="{!c.submitDetails}" 
+                                          />
+                        <aura:set attribute="else">
+                            <lightning:button label="Update" 
+                                              iconName="utility:save" 
+                                              iconPosition="right" 
+                                              class="slds-m-vertical_small slds-m-horizontal_small" 
+                                              variant="brand" 
+                                              onclick ="{!c.submitDetails}"
+                                              />
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+        </lightning:tab>
+        <lightning:tab label="Ceramic Tile" id="two" >
+            <c:CeramicTileForOtherProfile aura:id="ceramicID"  recordId="{!v.recordId}" />
+        </lightning:tab>
+           <lightning:tab label="Ancillary Items" id="three" >
+                    <c:DP_DealerProfileAncillaryForOther aura:id="ancillaryId" recordId="{!v.recordId}" />
+                </lightning:tab>
+                <lightning:tab label="LVT " id="four">
+                    <c:DP_OtherProfileLVT aura:id="lVTId" recordId="{!v.recordId}" />
+                </lightning:tab>
+                <lightning:tab  label="Laminate" id="five" >
+                    <c:DP_OtherProfileLamiante aura:id="lamianteId" recordId="{!v.recordId}" />
+                </lightning:tab>
+    </lightning:tabset>
+    <aura:if isTrue="{!v.isShowSpinner}">
+        <div class="slds-spinner_container"> 
+            <div role="status" class="slds-spinner_large slds-spinner_brand"> 
+                <lightning:spinner alternativeText="Loading" size="large" /> 
+            </div> 
+        </div>
+    </aura:if>
+</aura:component>

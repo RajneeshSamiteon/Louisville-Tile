@@ -1,0 +1,89 @@
+.THIS {
+}
+.THIS .Banner_Background{
+    z-index: 100;
+    background: rgb(17,39,58);
+    padding-top: 10px;
+    padding-bottom: 15px;
+    color: white;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 3% 5%;
+}
+.THIS .font-details{
+    font-size: 14px;
+    font-weight: bold;
+}
+.THIS .overlap-on-parent{
+    position: relative;
+    top: -15px;
+}
+.THIS .img-round{
+    border-radius: 50%;
+    border: 3px solid rgb(247 247 247);
+    width: 18%;
+}
+.THIS .margin-left{
+    margin-left: 5%;
+}
+.THIS .None_Background{
+    background : none;
+}
+.THIS .No_border{
+    border: none;
+}
+.THIS .slds-accordion__summary-content{
+    font-size: 17px;
+    font-weight: 600;
+}
+.THIS .commission-master_styles{
+    width: 98%;
+    border-bottom: 1px solid gray;
+    margin-bottom: 7px;
+    padding-bottom: 6px;
+}
+.THIS .slds-accordion {
+    width : 98%;
+    margin-left: 1%;
+}
+.THIS .break-word{
+    word-break: break-word;
+}
+.THIS .slds-card__header{
+    padding-top : 0px;
+}
+.THIS .slds-card{
+    width: fit-content;
+}
+
+.THIS .pointer{
+    cursor : pointer;
+}
+.THIS .dealer_contractor_heading{
+    font-size: 15px;
+    font-weight: 700;
+    color: rgb(78 78 78);
+}
+.THIS .slds-table_bordered tbody th{
+	border-top : none;
+    
+}
+.THIS .slds-accordion__list-item {
+    border-top: 0;
+    border-bottom: 1px solid gray;
+}
+@media(max-width:768px){
+    .THIS .display-props{
+        display: none;
+    }   
+    .THIS .right_align{
+        left: 92%;
+        position: relative;
+    }
+}
+@media(min-width:768px){
+    .THIS .show_menu{
+        display : none;
+    }
+}
